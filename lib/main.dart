@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/battle/screens/battle_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,6 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _navigateToBattlePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const BattlePage()), // Change to BattlePage
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -111,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            ElevatedButton(
+              onPressed: _navigateToBattlePage,
+              child: const Text('Go to Battle'),
             ),
           ],
         ),
