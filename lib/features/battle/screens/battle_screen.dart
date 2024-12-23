@@ -32,14 +32,38 @@ class _BattlePageState extends State<BattlePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Display Health
             Text(
               'Health: $_health HP',
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _attack,
-              child: const Text('Attack'),
+            const SizedBox(height: 40),
+            // Buttons Grid
+            GridView.count(
+              crossAxisCount: 2, // 2 columns
+              shrinkWrap:
+                  true, // Let GridView take only as much space as it needs
+              mainAxisSpacing: 10, // Spacing between rows
+              crossAxisSpacing: 10, // Spacing between columns
+              padding: const EdgeInsets.all(16),
+              children: [
+                ElevatedButton(
+                  onPressed: _attack,
+                  child: const Text('Attack'),
+                ),
+                ElevatedButton(
+                  onPressed: _defend,
+                  child: const Text('Defend'),
+                ),
+                ElevatedButton(
+                  onPressed: _magic,
+                  child: const Text('Magic'),
+                ),
+                ElevatedButton(
+                  onPressed: _item,
+                  child: const Text('Item'),
+                ),
+              ],
             ),
           ],
         ),
