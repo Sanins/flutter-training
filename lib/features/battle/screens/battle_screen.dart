@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:test_drive/features/battle/widgets/stats_drawer.dart';
 import 'package:test_drive/features/battle/widgets/boss_details_drawer.dart';
+import '../../../models/player.dart'; // Import the Player class
 
 class BattlePage extends StatefulWidget {
-  const BattlePage({super.key});
+  final Player player;
+
+  const BattlePage({super.key, required this.player});
 
   @override
   _BattlePageState createState() => _BattlePageState();
@@ -11,14 +14,35 @@ class BattlePage extends StatefulWidget {
 
 class _BattlePageState extends State<BattlePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _health = 100;
+  int _playerHealth = 100;
+  int _enemyHealth = 100;
+  int _enemyMeleeDamage = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    // You can initialize _playerHealth based on the Player's properties, if necessary
+    _playerHealth =
+        100; // Set this to your player's initial health if applicable
+  }
 
   void _attack() {
     setState(() {
-      if (_health > 0) {
-        _health -= 25;
-        if (_health < 0) {
-          _health = 0;
+      // Player attacks the enemy
+      if (_enemyHealth > 0) {
+        _enemyHealth -= 25; // Simulate player attack damage
+        if (_enemyHealth < 0) {
+          _enemyHealth = 0;
+        }
+      }
+
+      // Boss attacks back
+      if (_playerHealth > 0 && _enemyHealth > 0) {
+        final damageTaken =
+            (_enemyMeleeDamage * (1 - widget.player.damageReduction)).toInt();
+        _playerHealth -= damageTaken; // Simulate boss attack damage
+        if (_playerHealth < 0) {
+          _playerHealth = 0;
         }
       }
     });
@@ -26,10 +50,18 @@ class _BattlePageState extends State<BattlePage> {
 
   void _defend() {
     print("Defend action selected");
+    // Example of reducing damage using player's attributes
+    setState(() {
+      widget.player.damageReduction += 0.05; // Increase damage reduction
+    });
   }
 
   void _magic() {
     print("Magic action selected");
+    // Example of interacting with the player's crit chance
+    setState(() {
+      widget.player.critChance += 0.01;
+    });
   }
 
   void _item() {
@@ -47,12 +79,24 @@ class _BattlePageState extends State<BattlePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop, // Handle the back navigation
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        final navigator = Navigator.of(context);
+        bool value = await _onWillPop();
+        if (value) {
+          navigator.pop(result);
+        }
+      },
       child: Scaffold(
         key: _scaffoldKey, // Assign the global key
         appBar: AppBar(
           title: const Text('Battle Page'),
+          automaticallyImplyLeading: false,
+          actions: <Widget>[Container()],
         ),
         body: Stack(
           children: [
@@ -62,8 +106,15 @@ class _BattlePageState extends State<BattlePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Health: $_health HP',
+                    'Enemy Health: $_enemyHealth HP',
                     style: const TextStyle(fontSize: 24),
+                  ),
+                  Text(
+                    'Player Health: $_playerHealth HP',
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  Text(
+                    'Attack Power: ${widget.player.attackPower.toStringAsFixed(2)}',
                   ),
                   const SizedBox(height: 40),
                   GridView.count(
@@ -130,7 +181,10 @@ class _BattlePageState extends State<BattlePage> {
         ),
 
         drawer: const BossDetailsDrawer(),
-        endDrawer: StatsDrawer(health: _health),
+        endDrawer: StatsDrawer(
+          health: _playerHealth,
+          player: widget.player,
+        ), // Pass player to the stats drawer
       ),
     );
   }
