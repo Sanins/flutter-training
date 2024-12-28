@@ -17,7 +17,7 @@ class _BattlePageState extends State<BattlePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _playerHealth = 100;
   int _enemyHealth = 100;
-  int _enemyMeleeDamage = 10;
+  final int _enemyMeleeDamage = 10;
 
   @override
   void initState() {
@@ -163,8 +163,8 @@ class _BattlePageState extends State<BattlePage> {
                     _scaffoldKey.currentState
                         ?.openEndDrawer(); // Open stats drawer
                   },
-                  child: const Icon(Icons.arrow_forward),
                   backgroundColor: Colors.blue,
+                  child: const Icon(Icons.arrow_forward),
                 ),
               ),
             ),
@@ -179,8 +179,8 @@ class _BattlePageState extends State<BattlePage> {
                     _scaffoldKey.currentState
                         ?.openDrawer(); // Open boss details drawer
                   },
-                  child: const Icon(Icons.arrow_back),
                   backgroundColor: Colors.red,
+                  child: const Icon(Icons.arrow_back),
                 ),
               ),
             ),

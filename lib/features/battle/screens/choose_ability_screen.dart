@@ -32,7 +32,8 @@ class ChooseAbilityScreen extends StatelessWidget {
   final List<Ability> abilityChoices;
   final Player player;
 
-  ChooseAbilityScreen({
+  const ChooseAbilityScreen({
+    super.key,
     required this.abilityChoices,
     required this.player,
   });
@@ -40,7 +41,7 @@ class ChooseAbilityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Choose Your Reward")),
+      appBar: AppBar(title: const Text("Choose Your Reward")),
       body: ListView.builder(
         itemCount: abilityChoices.length,
         itemBuilder: (context, index) {

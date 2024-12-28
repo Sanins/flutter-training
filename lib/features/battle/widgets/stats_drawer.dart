@@ -5,8 +5,10 @@ class StatsDrawer extends StatelessWidget {
   final Player player; // Add player as a parameter
   final int health; // Add health as a parameter
 
-  const StatsDrawer({Key? key, required this.player, required this.health})
-      : super(key: key); // Update constructor to accept health
+  const StatsDrawer(
+      {super.key,
+      required this.player,
+      required this.health}); // Update constructor to accept health
 
   @override
   Widget build(BuildContext context) {
