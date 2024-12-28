@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_drive/features/battle/widgets/stats_drawer.dart';
 import 'package:test_drive/features/battle/widgets/boss_details_drawer.dart';
-import '../../../models/player.dart'; // Import the Player class
+import '../../../models/player.dart';
+import '../screens/celebration.screen.dart';
 
 class BattlePage extends StatefulWidget {
   final Player player;
@@ -31,8 +32,14 @@ class _BattlePageState extends State<BattlePage> {
       // Player attacks the enemy
       if (_enemyHealth > 0) {
         _enemyHealth -= 25; // Simulate player attack damage
-        if (_enemyHealth < 0) {
+        if (_enemyHealth <= 0) {
           _enemyHealth = 0;
+          // Navigate to celebration screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CelebrationScreen(player: Player())),
+          );
         }
       }
 
