@@ -8,22 +8,22 @@ class BossDetailsDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Drawer(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Boss Details',
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            const Text('Name: Evil Dragon'),
-            const SizedBox(height: 10),
-            const Text('Health: 5000 HP'),
-            const SizedBox(height: 10),
-            const Text('Attack: Fire Breath'),
-            const SizedBox(height: 10),
-            const Text('Weakness: Ice Magic'),
+            SizedBox(height: 20),
+            Text('Name: Evil Dragon'),
+            SizedBox(height: 10),
+            Text('Health: 5000 HP'),
+            SizedBox(height: 10),
+            Text('Attack: Fire Breath'),
+            SizedBox(height: 10),
+            Text('Weakness: Ice Magic'),
             // Add more details as needed
           ],
         ),
