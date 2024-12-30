@@ -15,8 +15,7 @@ class CelebrationScreen extends StatelessWidget {
   }
 
   void _returnHome(BuildContext context) {
-    Navigator.popUntil(
-        context, (route) => route.isFirst); // Return to the first screen
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   @override

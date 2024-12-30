@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'features/battle/screens/home_screen.dart';
 import 'features/battle/screens/login_screen.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'models/ModelProvider.dart';
 import './amplifyconfiguration.dart'; // your Amplify config file
 
 void main() async {
@@ -11,8 +14,16 @@ void main() async {
   // Set Amplify Logger level
   AmplifyLogger().logLevel = LogLevel.verbose;
 
+  // Add Auth, DataStore, and API plugins
   final authPlugin = AmplifyAuthCognito();
-  await Amplify.addPlugins([authPlugin]);
+  final dataStorePlugin = AmplifyDataStore(
+      modelProvider: ModelProvider.instance); // Add the DataStore plugin
+  final apiPlugin = AmplifyAPI(
+      modelProvider:
+          ModelProvider.instance); // Add API plugin with ModelProvider
+
+  await Amplify.addPlugins(
+      [authPlugin, dataStorePlugin, apiPlugin]); // Add all plugins
   await Amplify.configure(amplifyconfig);
 
   // Check if the user is already signed in on app launch
