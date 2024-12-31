@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  shared_preferences: ^2.0.9
   amplify_datastore: ^1.8.0
   amplify_api: ^1.2.1
 

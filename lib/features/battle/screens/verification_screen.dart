@@ -7,8 +7,7 @@ class VerificationScreen extends StatefulWidget {
   final String password; // Receive the password
 
   const VerificationScreen(
-      {Key? key, required this.email, required this.password})
-      : super(key: key);
+      {super.key, required this.email, required this.password});
 
   @override
   State<VerificationScreen> createState() => _VerificationScreenState();

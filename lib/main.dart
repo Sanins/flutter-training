@@ -5,8 +5,9 @@ import 'features/battle/screens/home_screen.dart';
 import 'features/battle/screens/login_screen.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
-import 'models/ModelProvider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import './amplifyconfiguration.dart';
+import 'models/ModelProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +22,10 @@ void main() async {
 
   bool isSignedIn = await _checkUserSignIn();
 
-  String? username = isSignedIn ? await _getUsername() : null;
+  // Check if user is signed in, and retrieve their data
+  Map<String, dynamic>? userData = isSignedIn ? await _getUserData() : null;
 
-  runApp(MyApp(isSignedIn: isSignedIn, username: username));
+  runApp(MyApp(isSignedIn: isSignedIn, userData: userData));
 }
 
 Future<bool> _checkUserSignIn() async {
@@ -36,13 +38,18 @@ Future<bool> _checkUserSignIn() async {
   }
 }
 
-Future<String?> _getUsername() async {
+// Retrieve user data from SharedPreferences first, then check the backend if needed
+Future<Map<String, dynamic>?> _getUserData() async {
   try {
-    // Check local storage first
-    final users = await Amplify.DataStore.query(User.classType);
-    print('Users: $users');
-    if (users.isNotEmpty) {
-      return users.first.username;
+    final prefs = await SharedPreferences.getInstance();
+
+    // Check if data is stored locally
+    String? username = prefs.getString('username');
+    int? level = prefs.getInt('level');
+    int? currentExp = prefs.getInt('currentExp');
+
+    if (username != null && level != null && currentExp != null) {
+      return {'username': username, 'level': level, 'currentExp': currentExp};
     }
 
     // If not in local storage, fetch from backend
@@ -56,27 +63,32 @@ Future<String?> _getUsername() async {
         )
         .response;
 
-    print('Response: $response');
     if (response.data != null) {
-      await Amplify.DataStore.save(response.data!); // Cache locally
-      return response.data!.username;
+      // Save data to local storage
+      await prefs.setString('username', response.data!.username!);
+      await prefs.setInt('level', response.data!.level);
+      await prefs.setInt('currentExp', response.data!.currentExp);
+
+      return {
+        'username': response.data!.username,
+        'level': response.data!.level,
+        'currentExp': response.data!.currentExp
+      };
     }
   } catch (e) {
-    print('Error fetching username: $e');
+    print('Error fetching user data: $e');
   }
-  return null; // Return null if no username is found
+  return null;
 }
 
 class MyApp extends StatelessWidget {
   final bool isSignedIn;
-  final String? username;
+  final Map<String, dynamic>? userData;
 
-  const MyApp({super.key, required this.isSignedIn, this.username});
+  const MyApp({super.key, required this.isSignedIn, this.userData});
 
   @override
   Widget build(BuildContext context) {
-    print('Defend action selected, $username');
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -84,7 +96,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: isSignedIn
-          ? MyHomePage(title: 'Home', initialUsername: username)
+          ? MyHomePage(
+              title: 'Home',
+              initialUsername: userData?['username'],
+              initialLevel: userData?['level'],
+              initialCurrentExp: userData?['currentExp'],
+            )
           : const LoginScreen(),
     );
   }
