@@ -44,7 +44,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const MyHomePage(title: 'Home'),
+              builder: (context) => const MyHomePage(),
             ),
           );
         } else {

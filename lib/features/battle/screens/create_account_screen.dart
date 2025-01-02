@@ -54,7 +54,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const MyHomePage(title: 'Home'),
+            builder: (context) => const MyHomePage(),
           ),
         );
       } else {

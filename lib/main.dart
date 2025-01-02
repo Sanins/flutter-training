@@ -97,7 +97,6 @@ class MyApp extends StatelessWidget {
       ),
       home: isSignedIn
           ? MyHomePage(
-              title: 'Home',
               initialUsername: userData?['username'],
               initialLevel: userData?['level'],
               initialCurrentExp: userData?['currentExp'],

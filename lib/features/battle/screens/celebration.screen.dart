@@ -10,7 +10,9 @@ class CelebrationScreen extends StatelessWidget {
   void _goToNextBattle(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => BattlePage(player: player)),
+      MaterialPageRoute(
+        builder: (context) => BattlePage(player: player),
+      ),
     );
   }
 
@@ -26,12 +28,12 @@ class CelebrationScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 1, // Important to prevent infinite list
+              itemCount: 1,
               itemBuilder: (context, index) {
                 return Card(
                   child: ListTile(
                     title: const Text('Go to next battle'),
-                    onTap: () => _goToNextBattle(context), // Pass context here
+                    onTap: () => _goToNextBattle(context),
                   ),
                 );
               },
