@@ -5,9 +5,11 @@ import 'features/battle/screens/home_screen.dart';
 import 'features/battle/screens/login_screen.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
 import './amplifyconfiguration.dart';
 import 'models/ModelProvider.dart';
+import 'package:provider/provider.dart';
+import './providers/item_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +27,9 @@ void main() async {
   // Check if user is signed in, and retrieve their data
   Map<String, dynamic>? userData = isSignedIn ? await _getUserData() : null;
 
-  runApp(MyApp(isSignedIn: isSignedIn, userData: userData));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => ItemProvider()),
+  ], child: MyApp(isSignedIn: isSignedIn, userData: userData)));
 }
 
 Future<bool> _checkUserSignIn() async {

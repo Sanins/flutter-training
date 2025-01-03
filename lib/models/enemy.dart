@@ -1,19 +1,29 @@
-class Boss {
-  final String name;
-  final String description;
-  final double hp; // Health points of the boss
-  final double attackPower; // Offensive power of the boss
-  final String type; // 'Offensive', 'Defensive', 'Utility', 'Passive'
-  final List<String> weaknesses; // List of elements the boss is weak against
-  final List<String> abilities; // List of special abilities the boss can use
+class Enemy {
+  String name;
+  double health;
+  double maxHealth;
+  double meleeDamage;
 
-  Boss({
+  Enemy({
     required this.name,
-    required this.description,
-    required this.hp,
-    required this.attackPower,
-    required this.type,
-    required this.abilities,
-    required this.weaknesses,
+    required this.health,
+    required this.maxHealth,
+    required this.meleeDamage,
   });
+
+  // Method to take damage
+  void takeDamage(double damage) {
+    health -= damage;
+    if (health < 0) {
+      health = 0; // Prevent negative health
+    }
+  }
+
+  // Method to heal
+  void heal(double amount) {
+    health += amount;
+    if (health > maxHealth) {
+      health = maxHealth; // Cap health at maxHealth
+    }
+  }
 }

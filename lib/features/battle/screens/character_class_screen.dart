@@ -37,6 +37,7 @@ class ChooseClassScreen extends StatelessWidget {
                     builder: (context) => ChooseAbilityScreen(
                       abilityChoices: abilities,
                       player: player,
+                      battleNumber: 1,
                     ),
                   ),
                 );
@@ -54,6 +55,7 @@ class ChooseClassScreen extends StatelessWidget {
                     builder: (context) => ChooseAbilityScreen(
                       abilityChoices: abilities,
                       player: player,
+                      battleNumber: 1,
                     ),
                   ),
                 );

@@ -16,6 +16,7 @@ dependencies:
   shared_preferences: ^2.0.9
   amplify_datastore: ^1.8.0
   amplify_api: ^1.2.1
+  provider: ^6.0.0
 
 dev_dependencies:
   flutter_test:

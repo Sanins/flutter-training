@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amplify_api/amplify_api.dart';
 import '../../../models/User.dart';
 import '../../../models/player.dart';
+import '../../../models/item.dart';
 import './character_class_screen.dart';
 import './username_setup_screen.dart';
 import '../widgets/header.dart';
@@ -29,6 +30,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int? level; // Make level nullable
   int? currentExp; // Make currentExp nullable
   Player player = Player();
+  final List<Item> items = [
+    Item(
+      title: 'Health Potion',
+      description: 'Restores a small amount of health.',
+      heal: 50, // This item heals 50 health points
+    ),
+  ];
 
   @override
   void initState() {
@@ -114,8 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
           builder: (context) => ChooseClassScreen(
-              player: player) // Replace with your battle screen
-          ),
+                player: player,
+              )),
     );
   }
 

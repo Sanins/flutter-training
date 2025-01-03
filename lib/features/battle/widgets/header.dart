@@ -17,6 +17,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(title),
+      automaticallyImplyLeading: false, // Disable the back button
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),

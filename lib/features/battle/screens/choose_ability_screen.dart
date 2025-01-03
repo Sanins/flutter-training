@@ -31,11 +31,13 @@ final abilities = [
 class ChooseAbilityScreen extends StatelessWidget {
   final List<Ability> abilityChoices;
   final Player player;
+  final int battleNumber;
 
   const ChooseAbilityScreen({
     super.key,
     required this.abilityChoices,
     required this.player,
+    required this.battleNumber,
   });
 
   @override
@@ -56,7 +58,8 @@ class ChooseAbilityScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BattlePage(player: player),
+                    builder: (context) =>
+                        BattlePage(player: player, battleNumber: 1),
                   ),
                 ); // Navigate to BattleScreen
               },

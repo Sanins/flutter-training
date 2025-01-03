@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:test_drive/features/battle/widgets/stats_drawer.dart';
 import 'package:test_drive/features/battle/widgets/boss_details_drawer.dart';
 import '../../../models/player.dart';
+import '../../../models/enemy.dart';
+import '../utils/battle_actions.dart';
 import '../screens/celebration.screen.dart';
 import './defeat_screen.dart';
-import '../utils/battle_actions.dart';
+import '../utils/enemy_factory.dart';
+import '../../../providers/item_provider.dart';
+import '../../../models/item.dart';
+
+// Example action lists
+final List<String> attackStyles = ["Sword Strike", "Power Slash", "Quick Jab"];
+final List<String> magicSpells = ["Fireball", "Ice Blast", "Healing Light"];
 
 class BattlePage extends StatefulWidget {
   final Player player;
+  final int battleNumber;
 
-  const BattlePage({super.key, required this.player});
+  const BattlePage({
+    super.key,
+    required this.player,
+    required this.battleNumber,
+  });
 
   @override
   _BattlePageState createState() => _BattlePageState();
@@ -17,53 +31,143 @@ class BattlePage extends StatefulWidget {
 
 class _BattlePageState extends State<BattlePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _enemyHealth = 100;
-  final int _enemyMeleeDamage = 10;
+  late Enemy enemy;
+  String selectedAction = 'Attack';
+
+  @override
+  void initState() {
+    super.initState();
+    enemy = generateEnemy(widget.battleNumber);
+  }
+
+  void _useItem(Item item) {
+    handleItem(
+      context: context,
+      player: widget.player,
+      item: item,
+      onItemUsed: () {
+        context.read<ItemProvider>().removeItem(item);
+
+        setState(() {});
+      },
+    );
+  }
 
   void _attack() {
     handleAttack(
       context: context,
       player: widget.player,
-      enemyHealth: _enemyHealth,
-      enemyMeleeDamage: _enemyMeleeDamage,
+      enemy: enemy,
       updateEnemyHealth: (newHealth) {
         setState(() {
-          _enemyHealth = newHealth;
+          enemy.health = newHealth;
         });
       },
       onEnemyDefeated: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CelebrationScreen(player: widget.player),
-          ),
-        );
+        _goToCelebrationScreen();
       },
       onPlayerDefeated: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DefeatScreen()),
+        _goToDefeatScreen();
+      },
+    );
+  }
+
+  void _goToCelebrationScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CelebrationScreen(
+          player: widget.player,
+          battleNumber: widget.battleNumber + 1,
+        ),
+      ),
+    );
+  }
+
+  void _goToDefeatScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DefeatScreen(),
+      ),
+    );
+  }
+
+  void _chat() {}
+
+  void _showAttackStyles() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Choose Attack Style"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: attackStyles
+                .map((style) => ListTile(
+                      title: Text(style),
+                      onTap: () {
+                        setState(() {
+                          selectedAction = style;
+                        });
+                        Navigator.pop(context);
+                        _attack();
+                      },
+                    ))
+                .toList(),
+          ),
         );
       },
     );
   }
 
-  void _defend() {
-    setState(() {
-      widget.player.damageReduction += 0.05;
-    });
+  void _showMagicSpells() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Choose Magic Spell"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: magicSpells
+                .map((spell) => ListTile(
+                      title: Text(spell),
+                      onTap: () {
+                        setState(() {
+                          selectedAction = spell;
+                        });
+                        Navigator.pop(context);
+                        _attack();
+                      },
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
   }
 
-  void _magic() {
-    setState(() {
-      widget.player.critChance += 0.01;
-    });
-  }
-
-  void _item() {
-    setState(() {
-      widget.player.heal(20.0);
-    });
+  void _showItems(List<Item> items) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Choose Item"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: items
+                .map((item) => ListTile(
+                      title: Text(item.title),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _useItem(item);
+                      },
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -73,7 +177,6 @@ class _BattlePageState extends State<BattlePage> {
       appBar: AppBar(
         title: const Text('Battle Page'),
         automaticallyImplyLeading: false,
-        actions: <Widget>[Container()],
       ),
       body: Stack(
         children: [
@@ -82,15 +185,12 @@ class _BattlePageState extends State<BattlePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Enemy Health: $_enemyHealth HP',
+                  '${enemy.name} Health: ${enemy.health.toStringAsFixed(1)} HP',
                   style: const TextStyle(fontSize: 24),
                 ),
                 Text(
                   'Player Health: ${widget.player.health.toStringAsFixed(1)} HP',
                   style: const TextStyle(fontSize: 24),
-                ),
-                Text(
-                  'Attack Power: ${widget.player.attackPower.toStringAsFixed(2)}',
                 ),
                 const SizedBox(height: 40),
                 GridView.count(
@@ -101,28 +201,37 @@ class _BattlePageState extends State<BattlePage> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     ElevatedButton(
-                      onPressed: _attack,
+                      onPressed: _showAttackStyles, // Show attack styles
                       child: const Text('Attack'),
                     ),
                     ElevatedButton(
-                      onPressed: _defend,
+                      onPressed: () {
+                        setState(() {
+                          widget.player.damageReduction += 0.05;
+                        });
+                      },
                       child: const Text('Defend'),
                     ),
                     ElevatedButton(
-                      onPressed: _magic,
+                      onPressed: _showMagicSpells, // Show magic spells
                       child: const Text('Magic'),
                     ),
                     ElevatedButton(
-                      onPressed: _item,
+                      onPressed: () {
+                        final items = context.read<ItemProvider>().items;
+                        _showItems(items); // Show the items from the provider
+                      },
                       child: const Text('Item'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _chat, // Show items
+                      child: const Text('Chat'),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-
-          // Floating action button to open stats drawer
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
@@ -137,7 +246,6 @@ class _BattlePageState extends State<BattlePage> {
               ),
             ),
           ),
-
           // Floating action button to open boss details drawer
           Align(
             alignment: Alignment.centerLeft,
@@ -155,12 +263,12 @@ class _BattlePageState extends State<BattlePage> {
           ),
         ],
       ),
-
-      drawer: const BossDetailsDrawer(),
+      drawer:
+          const BossDetailsDrawer(), // This is the drawer that should show the boss details
       endDrawer: StatsDrawer(
         health: widget.player.health.toInt(),
         player: widget.player,
-      ), // Pass player to the stats drawer
+      ),
     );
   }
 }
