@@ -3,12 +3,18 @@ class Enemy {
   double health;
   double maxHealth;
   double meleeDamage;
+  double evasionRate;
+  double defence;
+  double magicDefence;
 
   Enemy({
     required this.name,
     required this.health,
     required this.maxHealth,
     required this.meleeDamage,
+    required this.evasionRate,
+    required this.defence,
+    required this.magicDefence,
   });
 
   // Method to take damage

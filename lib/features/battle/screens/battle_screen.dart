@@ -11,10 +11,6 @@ import '../utils/enemy_factory.dart';
 import '../../../providers/item_provider.dart';
 import '../../../models/item.dart';
 
-// Example action lists
-final List<String> attackStyles = ["Sword Strike", "Power Slash", "Quick Jab"];
-final List<String> magicSpells = ["Fireball", "Ice Blast", "Healing Light"];
-
 class BattlePage extends StatefulWidget {
   final Player player;
   final int battleNumber;
@@ -53,11 +49,14 @@ class _BattlePageState extends State<BattlePage> {
     );
   }
 
-  void _attack() {
+  void _attack({required double damage, required double accuracy}) {
+    print('am i called');
     handleAttack(
       context: context,
       player: widget.player,
       enemy: enemy,
+      damage: damage,
+      accuracy: accuracy,
       updateEnemyHealth: (newHealth) {
         setState(() {
           enemy.health = newHealth;
@@ -95,23 +94,26 @@ class _BattlePageState extends State<BattlePage> {
 
   void _chat() {}
 
-  void _showAttackStyles() {
+  void _showFightAbilities() {
+    final fightAbilities =
+        widget.player.abilities.where((a) => a.type == 'Fight').toList();
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Choose Attack Style"),
+          title: const Text("Choose Fight Ability"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: attackStyles
-                .map((style) => ListTile(
-                      title: Text(style),
+            children: fightAbilities
+                .map((ability) => ListTile(
+                      title: Text(ability.name),
+                      subtitle: Text(ability.description),
                       onTap: () {
                         setState(() {
-                          selectedAction = style;
+                          selectedAction = ability.name;
                         });
                         Navigator.pop(context);
-                        _attack();
                       },
                     ))
                 .toList(),
@@ -122,22 +124,38 @@ class _BattlePageState extends State<BattlePage> {
   }
 
   void _showMagicSpells() {
+    print(widget.player.abilities);
+    final magicAbilities =
+        widget.player.abilities.where((a) => a.type == 'Magic').toList();
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Choose Magic Spell"),
+          title: const Text("Choose Magic Ability"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: magicSpells
-                .map((spell) => ListTile(
-                      title: Text(spell),
+            children: magicAbilities
+                .map((ability) => ListTile(
+                      title: Text(ability.name),
+                      subtitle: Text(
+                        '${ability.description}\nDamage: ${ability.damage ?? "N/A"}, Accuracy: ${ability.accuracy != null ? (ability.accuracy! * 100).toStringAsFixed(1) + "%" : "N/A"}',
+                        style: const TextStyle(
+                            fontSize: 12.0), // Optional: Adjust font size
+                      ),
+                      trailing: Text(ability.type),
                       onTap: () {
-                        setState(() {
-                          selectedAction = spell;
-                        });
                         Navigator.pop(context);
-                        _attack();
+                        if (!ability.utility &&
+                            ability.damage != null &&
+                            ability.accuracy != null &&
+                            ability.damage! > 0 &&
+                            ability.accuracy! > 0) {
+                          _attack(
+                            damage: ability.damage!,
+                            accuracy: ability.accuracy!,
+                          );
+                        }
                       },
                     ))
                 .toList(),
@@ -201,7 +219,7 @@ class _BattlePageState extends State<BattlePage> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     ElevatedButton(
-                      onPressed: _showAttackStyles, // Show attack styles
+                      onPressed: _showFightAbilities, // Show attack styles
                       child: const Text('Attack'),
                     ),
                     ElevatedButton(

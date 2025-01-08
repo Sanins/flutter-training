@@ -5,7 +5,7 @@ import 'package:amplify_api/amplify_api.dart';
 import '../../../models/User.dart';
 import '../../../models/player.dart';
 import '../../../models/item.dart';
-import './character_class_screen.dart';
+import 'generate_player_screen.dart';
 import './username_setup_screen.dart';
 import '../widgets/header.dart';
 
@@ -121,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ChooseClassScreen(
+          builder: (context) => GeneratePlayerScreen(
                 player: player,
               )),
     );

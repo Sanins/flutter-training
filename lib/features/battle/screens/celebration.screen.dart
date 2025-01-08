@@ -29,19 +29,16 @@ class CelebrationScreen extends StatelessWidget {
     Navigator.popUntil(context, (route) => route.isFirst);
   }
 
-  // Function to randomly select a potion
   String _getRandomPotion() {
     List<String> potions = [
       'Small Health Potion',
       'Small Mana Potion',
       'Small Action Potion',
     ];
-    // Randomly pick an item from the list
     final random = Random();
     return potions[random.nextInt(potions.length)];
   }
 
-  // Function to show a popup dialog with a random potion
   void _showRandomPotion(BuildContext context) {
     String randomPotion = _getRandomPotion();
     showDialog(
@@ -53,7 +50,7 @@ class CelebrationScreen extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('OK'),
             ),
@@ -65,13 +62,14 @@ class CelebrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Show random potion after a slight delay when the screen loads
     Future.delayed(const Duration(milliseconds: 500), () {
       _showRandomPotion(context);
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Choose Your Reward")),
+      appBar: AppBar(
+          title: const Text("Choose Your Reward"),
+          automaticallyImplyLeading: false),
       body: Column(
         children: [
           Expanded(

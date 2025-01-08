@@ -7,13 +7,14 @@ void handleAttack({
   required BuildContext context,
   required Player player,
   required Enemy enemy,
+  required double damage,
+  required double accuracy,
   required Function(double) updateEnemyHealth,
   required Function() onEnemyDefeated,
   required Function() onPlayerDefeated,
 }) {
-  // Player attacks the enemy
   if (enemy.health > 0) {
-    enemy.takeDamage(player.attackPower);
+    enemy.takeDamage(damage);
     updateEnemyHealth(enemy.health);
 
     if (enemy.health <= 0) {
@@ -22,7 +23,7 @@ void handleAttack({
     }
   }
 
-  // Enemy attacks back
+  // Enemy attacks back if still alive
   if (enemy.health > 0) {
     player.takeDamage(enemy.meleeDamage);
     if (player.health <= 0) {

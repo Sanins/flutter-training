@@ -14,24 +14,28 @@ class StatsDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Stats',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Text('Health: $health HP'), // Display health here
-            const SizedBox(height: 20),
-            Text('Attack Power: ${player.attackPower.toStringAsFixed(2)}'),
-            Text('Crit Chance: ${player.critChance * 100}%'),
-            const SizedBox(height: 20),
-            // Add other stats as needed
-          ],
-        ),
-      ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStatRow('Attack Power', player.attackPower),
+              _buildStatRow('Defense', player.defence),
+              _buildStatRow('Magic Defense', player.magicDefence),
+              _buildStatRow('Speed', player.speed),
+              _buildStatRow('Health', player.health),
+              _buildStatRow('Critical Chance', player.critChance * 100),
+            ],
+          )),
     );
   }
+}
+
+Widget _buildStatRow(String statName, double statValue) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Text(
+      '$statName: ${statValue.toStringAsFixed(2)}',
+      style: const TextStyle(fontSize: 16),
+    ),
+  );
 }

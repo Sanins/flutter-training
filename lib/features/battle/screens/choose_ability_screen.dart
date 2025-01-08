@@ -1,41 +1,14 @@
 import 'package:flutter/material.dart';
 import 'battle_screen.dart';
-import '../../../models/ability.dart';
 import '../../../models/player.dart';
-
-// Example abilities
-final abilities = [
-  Ability(
-    name: "Flaming Sword",
-    description: "Your attacks deal +25% fire damage.",
-    type: "Offensive",
-    rarity: 2,
-    applyEffect: (player) => player.attackPower *= 1.25,
-  ),
-  Ability(
-    name: "Shield of Aegis",
-    description: "Reduce damage taken by 15%.",
-    type: "Defensive",
-    rarity: 1,
-    applyEffect: (player) => player.damageReduction += 0.15,
-  ),
-  Ability(
-    name: "Lucky Charm",
-    description: "Increase critical hit chance by 10%.",
-    type: "Utility",
-    rarity: 2,
-    applyEffect: (player) => player.critChance += 0.1,
-  ),
-];
+import '../data/magic_abilities.dart';
 
 class ChooseAbilityScreen extends StatelessWidget {
-  final List<Ability> abilityChoices;
   final Player player;
   final int battleNumber;
 
   const ChooseAbilityScreen({
     super.key,
-    required this.abilityChoices,
     required this.player,
     required this.battleNumber,
   });
@@ -43,25 +16,27 @@ class ChooseAbilityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Choose Your Reward")),
+      appBar: AppBar(
+          title: const Text("Choose your starting abilities"),
+          automaticallyImplyLeading: false),
       body: ListView.builder(
-        itemCount: abilityChoices.length,
+        itemCount: abilitiesWithStats.length,
         itemBuilder: (context, index) {
-          final ability = abilityChoices[index];
+          final ability = abilitiesWithStats[index];
           return Card(
             child: ListTile(
               title: Text(ability.name),
               subtitle: Text(ability.description),
               trailing: Text(ability.type),
               onTap: () {
-                ability.applyEffect(player);
+                player.applyAbility(ability);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
                         BattlePage(player: player, battleNumber: 1),
                   ),
-                ); // Navigate to BattleScreen
+                );
               },
             ),
           );
